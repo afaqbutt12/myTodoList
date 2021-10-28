@@ -1,33 +1,23 @@
-import axios from "axios";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import "./Style.css";
-const Todoo = ({ handleToggleSidebar }) => {
+import * as action from "../Store/Action";
+const Todoo = ({ toupdate }) => {
   const [taskName, setTaskName] = useState("");
+  
 
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: "Bearer 1f6cf49d242e37b86b33341d94ed020799d435a4",
-  };
-
-  const AddTask = () => {
-    console.log("adding task==>");
-    const newTaskData = {
+  const AddTask = async() => {
+    let newTaskData = {
       content: taskName,
     };
-    axios
-      .post("https://api.todoist.com/rest/v1/tasks", newTaskData, {
-        headers,
-      })
-      .then((response) => {
-        console.log("respons data....>",response.data);
-      return handleToggleSidebar()})
-      .catch((err) => console.log(err.message));
+    await action.ToAddNewTask(newTaskData={newTaskData})
+    return toupdate();
   };
 
-  const AddTaskHandler = (e) => {
+  const AddTaskHandler = async(e) => {
     e.preventDefault();
     taskName && AddTask();
-    setTaskName('')
+    setTaskName("");
+   
   };
 
   return (
