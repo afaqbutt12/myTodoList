@@ -1,105 +1,86 @@
-import axios from "axios";
 
-import React, { useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { Context } from "../Context/Store";
+import React, { useEffect } from "react";
+import * as action from "../Store/Action";
 
-const List = ({ handleToggleSidebar }) => {
-  const [data, setdata] = useState([]);
-  const [Loading, setLoading] = useState(false);
-
+const List = ({ toupdate }) => {
+  const [updated, setupdated] = useState('')
+  
+  const [state, dispatch] = useContext(Context);
+  
   useEffect(() => {
-    axios
-      .get("https://api.todoist.com/rest/v1/tasks", {
-        headers: {
-          Authorization: "Bearer 1f6cf49d242e37b86b33341d94ed020799d435a4",
-        },
-      })
-      .then((response) => {
-        setdata(response.data);
-        setLoading(true)
-      })
-      .catch((err) => console.log(err.message));
-  }, [handleToggleSidebar]);
-
-  const del = (id) => {
-    setLoading(true)
-    axios
-      .delete(`https://api.todoist.com/rest/v1/tasks/${id}`, {
-        headers: {
-          Authorization: "Bearer 1f6cf49d242e37b86b33341d94ed020799d435a4",
-        },
-      })
-      .then((response) => {
-        console.log("res", response);
-        setLoading(false)
-
-        return handleToggleSidebar()
-      })
-      .catch((err) => console.log(err.message));
+    
+    const mydata=(async () => {
+      const test= await action.GetList();
+     await dispatch({type: 'ViewList', payload: test});
+   
+    })
+    mydata();
+    // console.log("updATES==>",state.UpdatedlistData);
+    if(state.UpdatedlistData){
+    setupdated(state.UpdatedlistData)
+    }
+  },[toupdate,state.UpdatedlistData])
+ 
+  
+ 
+  const del = async (id) => {
+    await action.Todelete(id={id})
+    return toupdate();
   };
-
-
-
-  const edit = (index) => {
-    const edititem = data.find((element) => {
+useEffect( () => {
+  const edit=(async () => {
+  
+  if(updated)
+  {await action.ToEdit(updated)
+  return toupdate()}
+  
+  })
+  edit()
+}, [updated])
+  const edit = async (index) => {
+    let edititem = state.ListData.find((element) => {
       return element.id === index;
     });
-    const abc = prompt("Please enter your name", edititem.content);
-    console.log(abc);
-
-    const newTaskData = {
+    let abc = prompt("Please enter your name", edititem.content);
+    
+    let newTaskData = {
       content: abc,
     };
-    axios
-      .post(
-        `https://api.todoist.com/rest/v1/tasks/${edititem.id}`,
-        newTaskData,
-        {
-          headers : {
-            "Content-Type": "application/json",
-            Authorization: "Bearer 1f6cf49d242e37b86b33341d94ed020799d435a4",
-          }
-        }
-      )
-      .then((response) => {
-        setLoading(false)
-
-        console.log("respons data....>", response);
-        return handleToggleSidebar()
-      })
-      .catch((err) => console.log(err.message));
+   
+    await dispatch({type: 'EditList', payload:{edititem,newTaskData} });
+    // console.log("updATES==>",updated);
+    // await action.ToEdit(edititem={edititem} ,newTaskData)
+    //     return toupdate();
+    
   };
 
-
-  
-
-  const list = data.map((items) => {
-    return (
-      <div className="eachItem" key={items.id}>
-        <h1>{items.content}</h1>
-        <div className="todo-btn">
-          <i
-            className="far fa-edit add-btn"
-            onClick={() => edit(items.id)}
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop"
-          ></i>
-          <i
-            className="far fa-trash-alt add-btn"
-            onClick={() => del(items.id)}
-          ></i>
-        </div>
-      </div>
-    );
-  });
+ 
   return (
     <>
-      {Loading ?
-
-      <div className="showItem text-white">{list}</div>: <div className="loading">
-      <h1>loading</h1>
+      {
+        <div className="showItem text-white">{state.ListData?.map((items) => {
+          return (
+            <div className="eachItem" key={items.id}>
+              <h1>{items.content}</h1>
+              <div className="todo-btn">
+                <i
+                  className="far fa-edit add-btn"
+                  onClick={() => edit(items.id)}
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                ></i>
+                <i
+                  className="far fa-trash-alt add-btn"
+                  onClick={() => del(items.id)}
+                ></i>
+              </div>
+            </div>
+          );
+        })}</div>
+     }
      
-    </div>}
-      
     </>
   );
 };
