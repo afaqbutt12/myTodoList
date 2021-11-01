@@ -22,7 +22,7 @@ const Todoo = ({ toupdate }) => {
   };
 
   return (
-    <>
+    <form onSubmit={AddTaskHandler}>
       <div className="addItems">
         <input
           type="text"
@@ -31,17 +31,17 @@ const Todoo = ({ toupdate }) => {
           className="form-control"
           onChange={(e) => setTaskName(e.target.value)}
         />
-        <i className="fa fa-plus add-btn" onClick={AddTaskHandler}></i>
-        {/* {toogle ? (
-          ) : (
-          <i className="far fa-edit add-btn" onClick={AddTaskHandler}></i>
-        )} */}
-      </div>
+        <button className="fa fa-plus add-btn" type="submit"></button>
+        </div>
+        </form>
+        );
+        };
+        
+        export default Todoo;
+//  {toogle ? (
+//           ) : (
+//           <i className="far fa-edit add-btn" onClick={AddTaskHandler}></i>
+//         )}
 
-      {/* </div>
-      </div> */}
-    </>
-  );
-};
-
-export default Todoo;
+//        </div>
+//       </div> 

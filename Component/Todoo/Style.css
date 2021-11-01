@@ -84,6 +84,9 @@ input:focus {
   display: flex;
   justify-content: space-around;
 }
+.add-btn{
+  border: none;
+}
 
 .fa {
   margin-left: -2.5rem;

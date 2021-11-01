@@ -8,7 +8,7 @@ const List = ({ toupdate }) => {
 
   useEffect(() => {
     const mydata = async () => {
-      await dispatch(await action.GetList());
+      dispatch(await action.GetList());
     };
     mydata();
   }, [toupdate]);
@@ -28,7 +28,7 @@ const List = ({ toupdate }) => {
       updated: { content: abc },
       edititem,
     };
-    await dispatch(await action.ToEdit(newTaskData));
+    dispatch(await action.ToEdit(newTaskData));
     return toupdate();
   };
 
