@@ -1,23 +1,24 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Style.css";
-import * as action from "../Store/Action";
+import * as action from "../API_actions/Action";
+import { Context } from "../Context/Store";
 const Todoo = ({ toupdate }) => {
   const [taskName, setTaskName] = useState("");
-  
+  const [state, dispatch] = useContext(Context);
 
-  const AddTask = async() => {
+  const AddTask = async () => {
     let newTaskData = {
       content: taskName,
     };
-    await action.ToAddNewTask(newTaskData={newTaskData})
+    dispatch(await action.ToAddNewTask(newTaskData));
     return toupdate();
   };
 
-  const AddTaskHandler = async(e) => {
+  const AddTaskHandler = async (e) => {
     e.preventDefault();
+
     taskName && AddTask();
     setTaskName("");
-   
   };
 
   return (
